@@ -7,28 +7,29 @@ import (
 	"log"
 	"net/http"
 )
+
 var templates *template.Template
 
 func RegisterHandler(w http.ResponseWriter, r *http.Request) {
-    handlers.RenderTemplate(w, "register", nil)
+	handlers.RenderTemplate(w, "register", nil)
 }
+
 // --- Main Function ---
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-    w.WriteHeader(http.StatusNotFound)
-    handlers.RenderTemplate(w, "404", nil)
+	w.WriteHeader(http.StatusNotFound)
+	handlers.RenderTemplate(w, "404", nil)
 }
 
 func main() {
 
-		// Initialize the database
-		models.InitDB()
-	
+	// Initialize the database
+	models.InitDB()
 
-    // Routes
-    http.HandleFunc("/", handlers.HomeHandler)
-    http.HandleFunc("/register", handlers.RegisterHandler)
-    http.HandleFunc("/login", handlers.LoginHandler)
+	// Routes
+	http.HandleFunc("/", handlers.HomeHandler)
+	http.HandleFunc("/register", handlers.RegisterHandler)
+	http.HandleFunc("/login", handlers.LoginHandler)
 	http.HandleFunc("/logout", func(w http.ResponseWriter, r *http.Request) {
 		handlers.DestroySession(w, r)
 		http.Redirect(w, r, "/", http.StatusSeeOther)
@@ -37,15 +38,15 @@ func main() {
 	http.HandleFunc("/createPost", handlers.CreatePostHandler)
 
 	http.HandleFunc("/viewPost", handlers.ViewPostHandler)
-	
-    // Add a fallback for unknown routes
-    http.HandleFunc("/404", NotFoundHandler)
 
-    // Serve static files
-    http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+	// Add a fallback for unknown routes
+	http.HandleFunc("/404", NotFoundHandler)
 
-    log.Println("Server is running on http://localhost:8080")
-    if err := http.ListenAndServe(":8080", nil); err != nil {
-        log.Fatal("Failed to start server: ", err)
-    }
+	// Serve static files
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
+
+	log.Println("Server is running on http://localhost:8080")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal("Failed to start server: ", err)
+	}
 }
